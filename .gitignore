@@ -1,0 +1,70 @@
+# Python environments
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# IDE and operating system
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Raw and prepared scene data
+data/
+datasets/
+prepared/
+prepared-clean/
+images/
+masks/
+
+# Nerfstudio results
+outputs/
+exports/
+checkpoints/
+nerfstudio_models/
+wandb/
+
+# Model and point-cloud files
+*.ckpt
+*.pth
+*.pt
+*.ply
+*.splat
+*.npy
+*.npz
+*.h5
+*.hdf5
+
+# Archives and videos
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.mp4
+*.mov
+*.avi
+*.mkv
+
+# Viewer dependencies and generated builds
+node_modules/
+dist/
+viewer/node_modules/
+viewer/dist/
+
+# Large viewer scene assets
+viewer/public/scene/
+viewer/public/dataset/views/
+viewer/public/processed/
+
+# Local experiment folders
+saved-results/
+evidence-*/
+camera-comparison-*/
+camera-constrained-comparison/
+method-comparison/
+remote-experiment-backup-*/
