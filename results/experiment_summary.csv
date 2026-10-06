@@ -1,0 +1,9 @@
+Experiment,Camera setup,Steps,PSNR,SSIM,LPIPS,Decision
+C0,Original per-view centres; optimizer off,1800,18.286953,0.712710,0.452275,Rejected
+C1,Arithmetic-mean shared centres; optimizer off,1800,18.498203,0.717784,0.441377,Useful camera correction
+C2,Arithmetic-mean shared centres + SO3xR3,1800,18.197393,0.711743,0.362330,Selected final model
+C3,C2 with stronger translation regularization,1800,18.251581,0.713583,0.366763,No consistent improvement
+Earlier shared-centre model,Median shared centres + SO3xR3,1800,18.125732,0.708707,0.362047,Earlier viewer model
+Earlier shared-centre model,Median shared centres + SO3xR3,2100,17.971298,0.704698,0.349828,Training-duration comparison
+D1,Mean shared centres + depth loss 0.10,1800,17.239687,0.695077,0.405823,Rejected after pilot
+2DGS,Mean shared centres + official 2DGS,10000,18.681942,0.724053,0.388944,Rejected after pilot

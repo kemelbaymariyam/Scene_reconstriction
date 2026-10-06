@@ -1,3 +1,5 @@
+> **Historical note:** this document describes the first approach (DN-Splatter with depth supervision and camera optimisation disabled). It was later rejected; the final model is Splatfacto with shared camera centres and SO3xR3 pose refinement. See [REPORT.md](REPORT.md).
+
 # InfraScan DN-Splatter Reconstruction
 
 This repository converts the supplied InfraScan DA3 output into a

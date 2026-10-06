@@ -1,0 +1,18 @@
+Final walkthrough reconstruction: C2
+
+Camera preprocessing:
+- Arithmetic-mean shared centre for each 12-view scan group
+- Individual yaw rotations retained
+
+Training:
+- Splatfacto
+- SO3xR3 pose refinement
+- Scanner point-cloud initialization
+- Person masks enabled
+- Full-resolution images
+- 1800 training steps
+
+Evaluation:
+- PSNR: 18.197393417
+- SSIM: 0.711742938
+- LPIPS: 0.362329662

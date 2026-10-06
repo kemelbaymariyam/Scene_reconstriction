@@ -1,0 +1,775 @@
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #f4f7fb;
+  background: #0b0f16;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+html, body, #app { width: 100%; height: 100%; margin: 0; }
+body { overflow: hidden; background: #0b0f16; }
+button, input { font: inherit; }
+
+.app-shell {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+  min-height: 0;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 14px 18px;
+  border-bottom: 1px solid #253044;
+  background: rgba(15, 21, 31, 0.97);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+  z-index: 10;
+}
+
+.topbar h1 { margin: 0; font-size: 20px; letter-spacing: 0.01em; }
+.topbar p { margin: 4px 0 0; color: #9eabc0; font-size: 13px; }
+
+.tour-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+.tour-button {
+  border: 0;
+  border-radius: 9px;
+  padding: 9px 14px;
+  color: #081019;
+  background: #54d6ff;
+  cursor: pointer;
+  font-weight: 700;
+}
+.tour-button.secondary { color: #dbe7f6; background: #273247; }
+.tour-button:disabled { opacity: 0.45; cursor: not-allowed; }
+.tour-progress { min-width: 130px; color: #9eabc0; font-size: 13px; }
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  min-height: 0;
+  height: 100%;
+}
+.viewer {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 35%, #1d2634, #070a0f 75%);
+}
+.viewer canvas { display: block; width: 100% !important; height: 100% !important; }
+
+.sidebar {
+  overflow-y: auto;
+  padding: 12px;
+  border-left: 1px solid #253044;
+  background: #101620;
+}
+.panel {
+  margin-bottom: 12px;
+  padding: 13px;
+  border: 1px solid #28364b;
+  border-radius: 12px;
+  background: #151d29;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+}
+.panel h2 { margin: 0; font-size: 15px; }
+.panel-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.panel-heading span { color: #8f9caf; font-size: 12px; text-align: right; }
+.hint, .status, .caveat-panel p { margin: 9px 0 0; color: #a9b5c7; font-size: 12px; line-height: 1.5; }
+
+.minimap-svg { display: block; width: 100%; height: auto; cursor: pointer; }
+.minimap-bg { fill: #0b111a; stroke: #2d3c52; stroke-width: 1.5; }
+.minimap-path { fill: none; stroke: #5f789b; stroke-width: 2; stroke-dasharray: 5 5; opacity: 0.85; }
+.minimap-scan { fill: #ffc62e; stroke: #0c1119; stroke-width: 2; cursor: pointer; }
+.minimap-scan:hover { fill: #ff4f8b; r: 7; }
+.minimap-current { fill: #ff4f8b; stroke: #ffffff; stroke-width: 2; pointer-events: none; }
+.minimap-heading { stroke: #35d4ff; stroke-width: 3; stroke-linecap: round; pointer-events: none; }
+
+.view-list { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.view-button {
+  border: 1px solid #33435b;
+  border-radius: 8px;
+  padding: 7px 4px;
+  color: #c8d4e6;
+  background: #202b3b;
+  cursor: pointer;
+  font-size: 12px;
+}
+.view-button:hover { border-color: #55d6ff; }
+.view-button.active { color: #091018; border-color: #55d6ff; background: #55d6ff; font-weight: 700; }
+
+.image-wrap {
+  display: grid;
+  place-items: center;
+  min-height: 160px;
+  margin-top: 10px;
+  overflow: hidden;
+  border-radius: 9px;
+  background: #090d13;
+}
+.image-wrap img { display: block; width: 100%; max-height: 230px; object-fit: contain; }
+.caveat-panel { border-color: #5a4a2b; background: #211d15; }
+
+@media (max-width: 950px) {
+  body { overflow: auto; }
+  .app-shell { height: auto; min-height: 100%; }
+  .topbar { align-items: flex-start; flex-direction: column; }
+  .tour-controls { justify-content: flex-start; }
+  .workspace { grid-template-columns: 1fr; grid-template-rows: minmax(520px, 70vh) auto; }
+  .sidebar { border-left: 0; border-top: 1px solid #253044; }
+}
+
+.look-help {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  z-index: 20;
+  max-width: calc(100% - 32px);
+  padding: 9px 12px;
+  border: 1px solid rgba(115, 209, 255, 0.28);
+  border-radius: 9px;
+  color: #d9f5ff;
+  background: rgba(8, 15, 24, 0.78);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  font-size: 12px;
+  backdrop-filter: blur(8px);
+}
+
+.lock-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 11px;
+  border: 1px solid #36526c;
+  border-radius: 999px;
+  color: #bfefff;
+  background: #162535;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.minimap-label {
+  fill: #aebcd0;
+  font-size: 9px;
+  font-weight: 700;
+  pointer-events: all;
+  cursor: pointer;
+  paint-order: stroke;
+  stroke: #0b111a;
+  stroke-width: 3px;
+}
+
+.minimap-floorplan {
+  opacity: 0.92;
+  pointer-events: none;
+  clip-path: inset(0 round 12px);
+}
+
+.minimap-path {
+  stroke: rgba(107, 212, 255, 0.86);
+  stroke-width: 2.2;
+  stroke-dasharray: 5 5;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+}
+
+.minimap-scan {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9));
+}
+
+.image-panel .panel-heading {
+  margin-bottom: 10px;
+}
+
+.image-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 220px;
+  overflow: hidden;
+  border: 1px solid #2c3b50;
+  border-radius: 10px;
+  background:
+    linear-gradient(45deg, rgba(255, 255, 255, 0.025) 25%, transparent 25%) 0 0 / 18px 18px,
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.025) 25%, transparent 25%) 0 0 / 18px 18px,
+    #080c12;
+}
+
+.image-wrap img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  cursor: crosshair;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.crosshair {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ff4f8b;
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.88), 0 2px 10px rgba(0, 0, 0, 0.8);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.crosshair::before,
+.crosshair::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: #ff4f8b;
+  transform: translate(-50%, -50%);
+}
+
+.crosshair::before { width: 26px; height: 2px; }
+.crosshair::after { width: 2px; height: 26px; }
+
+.small-button {
+  border: 1px solid #3a4b64;
+  border-radius: 8px;
+  padding: 6px 9px;
+  color: #cdd9ea;
+  background: #202b3b;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.small-button:hover {
+  border-color: #55d6ff;
+  color: #eaf9ff;
+}
+
+
+.marker-label-field {
+  display: grid;
+  gap: 6px;
+  margin: 4px 0 10px;
+  color: #c9d5e7;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.marker-label-field input {
+  width: 100%;
+  border: 1px solid #354760;
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: #f7fbff;
+  outline: none;
+  background: #0d141e;
+}
+
+.marker-label-field input:focus {
+  border-color: #55d6ff;
+  box-shadow: 0 0 0 2px rgba(85, 214, 255, 0.14);
+}
+
+.annotation-list {
+  display: grid;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.annotation-empty {
+  margin: 0;
+  color: #7f8da2;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.annotation-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid #33435b;
+  border-radius: 9px;
+  background: #101722;
+}
+
+.annotation-copy {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.annotation-copy strong {
+  overflow: hidden;
+  color: #ffffff;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.annotation-copy span {
+  color: #8f9caf;
+  font-size: 10px;
+}
+
+.annotation-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 5px;
+}
+
+.annotation-button {
+  border: 1px solid #3b526d;
+  border-radius: 7px;
+  padding: 5px 7px;
+  color: #c9f3ff;
+  background: #17283a;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.annotation-button:hover {
+  border-color: #55d6ff;
+}
+
+.annotation-button.danger {
+  color: #ffd2df;
+  border-color: #6a3548;
+  background: #351824;
+}
+
+/* Screen-space 3D annotations -------------------------------------------------
+   These controls are HTML overlays projected from world coordinates. They stay
+   crisp and clickable even when the Gaussian renderer would otherwise draw over
+   a Three.js marker. */
+.annotation-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 70;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.annotation-screen-marker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: max-content;
+  pointer-events: auto;
+  will-change: transform;
+  filter: drop-shadow(0 7px 16px rgba(0, 0, 0, 0.72));
+}
+
+.annotation-screen-button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 220px;
+  min-height: 34px;
+  padding: 5px 10px 5px 6px;
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+  color: #ffffff;
+  background: rgba(20, 9, 17, 0.94);
+  box-shadow:
+    0 0 0 3px rgba(255, 79, 139, 0.88),
+    0 0 24px rgba(255, 79, 139, 0.72);
+  cursor: pointer;
+  backdrop-filter: blur(7px);
+}
+
+.annotation-screen-button:hover,
+.annotation-screen-button:focus-visible {
+  outline: none;
+  background: rgba(59, 13, 38, 0.98);
+  box-shadow:
+    0 0 0 4px rgba(255, 79, 139, 0.95),
+    0 0 32px rgba(255, 79, 139, 0.9);
+}
+
+.annotation-screen-target {
+  position: relative;
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  border: 3px solid #ff4f8b;
+  border-radius: 999px;
+  background: #ffffff;
+}
+
+.annotation-screen-target::before,
+.annotation-screen-target::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: #ff4f8b;
+  transform: translate(-50%, -50%);
+}
+.annotation-screen-target::before { width: 28px; height: 2px; }
+.annotation-screen-target::after { width: 2px; height: 28px; }
+
+.annotation-screen-label {
+  overflow: hidden;
+  max-width: 165px;
+  font-size: 12px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.annotation-screen-marker::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -15px;
+  width: 2px;
+  height: 16px;
+  background: linear-gradient(#ff4f8b, rgba(255, 79, 139, 0));
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.annotation-screen-editor {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 12px);
+  z-index: 3;
+  width: 250px;
+  padding: 10px;
+  border: 1px solid #ff80ac;
+  border-radius: 11px;
+  background: rgba(12, 17, 25, 0.98);
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.58);
+  transform: translateX(-50%);
+}
+
+.annotation-screen-editor[hidden] { display: none; }
+.annotation-screen-editor label { display: grid; gap: 5px; }
+.annotation-screen-editor label span {
+  color: #cbd8ea;
+  font-size: 11px;
+  font-weight: 700;
+}
+.annotation-screen-editor input {
+  width: 100%;
+  border: 1px solid #40536f;
+  border-radius: 7px;
+  padding: 7px 9px;
+  color: #ffffff;
+  outline: none;
+  background: #0b111a;
+}
+.annotation-screen-editor input:focus {
+  border-color: #55d6ff;
+  box-shadow: 0 0 0 2px rgba(85, 214, 255, 0.14);
+}
+
+.annotation-screen-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 9px;
+}
+.annotation-screen-actions button {
+  border: 1px solid #3c4e68;
+  border-radius: 7px;
+  padding: 6px 7px;
+  color: #e9f1fb;
+  background: #1b2637;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 800;
+}
+.annotation-screen-actions button:hover { border-color: #55d6ff; }
+.annotation-screen-actions button.danger {
+  border-color: #74354d;
+  color: #ffd8e4;
+  background: #3a1524;
+}
+
+@media (max-width: 700px) {
+  .annotation-screen-label { max-width: 110px; }
+  .annotation-screen-editor { width: 220px; }
+}
+
+/* White interface refinement -------------------------------------------------
+   The photographic scene remains the visual focus, while the application
+   chrome, annotations and scan controls use a clean high-contrast palette. */
+:root {
+  color: #172033;
+  background: #f3f5f7;
+}
+
+body { background: #f3f5f7; }
+
+.topbar {
+  border-bottom-color: #dce2e8;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 6px 22px rgba(27, 39, 54, 0.08);
+}
+.topbar h1 { color: #111827; }
+.topbar p { color: #667085; }
+
+.tour-button {
+  color: #ffffff;
+  background: #1d4ed8;
+  box-shadow: 0 5px 14px rgba(29, 78, 216, 0.18);
+}
+.tour-button:hover:not(:disabled) { background: #1e40af; }
+.tour-button.secondary {
+  color: #27364a;
+  border: 1px solid #d6dde5;
+  background: #ffffff;
+  box-shadow: none;
+}
+.tour-progress { color: #667085; }
+.lock-badge {
+  color: #1e3a5f;
+  border-color: #c8d9ee;
+  background: #eef6ff;
+}
+
+.viewer {
+  background: radial-gradient(circle at 50% 35%, #f6f8fa, #dce2e8 78%);
+}
+
+.sidebar {
+  border-left-color: #dce2e8;
+  background: #f5f7f9;
+}
+.panel {
+  border-color: #dde3e9;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(31, 45, 61, 0.07);
+}
+.panel h2 { color: #172033; }
+.panel-heading span { color: #667085; }
+.hint, .status, .caveat-panel p { color: #667085; }
+.caveat-panel {
+  border-color: #ead8a6;
+  background: #fffaf0;
+}
+
+.look-help {
+  color: #243044;
+  border-color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.90);
+  box-shadow: 0 8px 24px rgba(30, 41, 59, 0.16);
+}
+
+.view-button,
+.small-button {
+  color: #334155;
+  border-color: #d6dee7;
+  background: #ffffff;
+}
+.view-button:hover,
+.small-button:hover {
+  color: #1d4ed8;
+  border-color: #7da7eb;
+}
+.view-button.active {
+  color: #ffffff;
+  border-color: #1d4ed8;
+  background: #1d4ed8;
+}
+
+.image-wrap {
+  border-color: #dce2e8;
+  background:
+    linear-gradient(45deg, rgba(15, 23, 42, 0.025) 25%, transparent 25%) 0 0 / 18px 18px,
+    linear-gradient(-45deg, rgba(15, 23, 42, 0.025) 25%, transparent 25%) 0 0 / 18px 18px,
+    #f5f7f9;
+}
+
+.marker-label-field { color: #344054; }
+.marker-label-field input {
+  color: #172033;
+  border-color: #d1d9e2;
+  background: #ffffff;
+}
+.marker-label-field input:focus {
+  border-color: #4f83df;
+  box-shadow: 0 0 0 3px rgba(79, 131, 223, 0.14);
+}
+
+.crosshair { border-color: #1d4ed8; }
+.crosshair::before,
+.crosshair::after { background: #1d4ed8; }
+
+.annotation-empty { color: #7b8798; }
+.annotation-item {
+  border-color: #dce2e8;
+  background: #f8fafc;
+}
+.annotation-copy strong { color: #172033; }
+.annotation-copy span { color: #667085; }
+.annotation-button {
+  color: #334155;
+  border-color: #d6dee7;
+  background: #ffffff;
+}
+.annotation-button:hover { color: #1d4ed8; border-color: #7da7eb; }
+.annotation-button.danger {
+  color: #b42318;
+  border-color: #f1c8c4;
+  background: #fff6f5;
+}
+
+/* Crisp screen-space scan controls. These are projected from the same world
+   floor positions as the previous meshes, but do not blur into Gaussian
+   splats because their size and edge are drawn by HTML/CSS. */
+.scan-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  overflow: hidden;
+  pointer-events: none;
+}
+.scan-screen-marker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 2px solid #162033;
+  border-radius: 999px;
+  color: #162033;
+  background: #ffffff;
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.82),
+    0 5px 14px rgba(15, 23, 42, 0.28);
+  cursor: pointer;
+  pointer-events: auto;
+  transform-origin: center;
+  transition: border-color 120ms ease, color 120ms ease, background 120ms ease, box-shadow 120ms ease;
+  will-change: transform;
+}
+.scan-screen-marker::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 3px);
+  width: 2px;
+  height: 9px;
+  border-radius: 2px;
+  background: rgba(22, 32, 51, 0.75);
+  transform: translateX(-50%);
+}
+.scan-screen-marker:hover,
+.scan-screen-marker:focus-visible {
+  outline: none;
+  color: #1d4ed8;
+  border-color: #1d4ed8;
+  box-shadow:
+    0 0 0 4px rgba(255, 255, 255, 0.92),
+    0 7px 18px rgba(29, 78, 216, 0.28);
+}
+.scan-screen-marker.selected {
+  color: #ffffff;
+  border-color: #ffffff;
+  background: #1d4ed8;
+  box-shadow:
+    0 0 0 4px rgba(29, 78, 216, 0.88),
+    0 8px 22px rgba(15, 23, 42, 0.34);
+}
+.scan-screen-marker.selected::after { background: #1d4ed8; }
+.scan-screen-core {
+  position: absolute;
+  inset: 5px;
+  border: 1px solid currentColor;
+  border-radius: inherit;
+  opacity: 0.24;
+}
+.scan-screen-number {
+  position: relative;
+  z-index: 1;
+  font-size: 11px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+/* White 3D annotation chips. */
+.annotation-screen-marker {
+  filter: drop-shadow(0 8px 17px rgba(15, 23, 42, 0.25));
+}
+.annotation-screen-button {
+  color: #172033;
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow:
+    0 0 0 2px rgba(23, 32, 51, 0.82),
+    0 8px 22px rgba(15, 23, 42, 0.24);
+}
+.annotation-screen-button:hover,
+.annotation-screen-button:focus-visible {
+  color: #1d4ed8;
+  background: #ffffff;
+  box-shadow:
+    0 0 0 3px rgba(29, 78, 216, 0.92),
+    0 10px 28px rgba(15, 23, 42, 0.28);
+}
+.annotation-screen-target {
+  border-color: #172033;
+  background: #ffffff;
+}
+.annotation-screen-target::before,
+.annotation-screen-target::after { background: #172033; }
+.annotation-screen-marker::after {
+  background: linear-gradient(#172033, rgba(23, 32, 51, 0));
+}
+.annotation-screen-editor {
+  color: #172033;
+  border-color: #d5dde6;
+  background: rgba(255, 255, 255, 0.99);
+  box-shadow: 0 16px 38px rgba(15, 23, 42, 0.22);
+}
+.annotation-screen-editor label span { color: #475467; }
+.annotation-screen-editor input {
+  color: #172033;
+  border-color: #d1d9e2;
+  background: #ffffff;
+}
+.annotation-screen-actions button {
+  color: #334155;
+  border-color: #d6dee7;
+  background: #f8fafc;
+}
+.annotation-screen-actions button:hover { color: #1d4ed8; border-color: #7da7eb; }
+.annotation-screen-actions button.danger {
+  color: #b42318;
+  border-color: #f1c8c4;
+  background: #fff6f5;
+}
+
+.minimap-scan {
+  fill: #ffffff;
+  stroke: #172033;
+  stroke-width: 2.3;
+}
+.minimap-scan:hover { fill: #dbeafe; }
+.minimap-current {
+  fill: #1d4ed8;
+  stroke: #ffffff;
+  stroke-width: 2.6;
+}
+.minimap-heading { stroke: #1d4ed8; }
+.minimap-label { fill: #f8fafc; }
+
+@media (max-width: 700px) {
+  .scan-screen-marker { width: 27px; height: 27px; }
+  .scan-screen-number { font-size: 10px; }
+}

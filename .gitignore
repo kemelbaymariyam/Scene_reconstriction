@@ -68,3 +68,8 @@ camera-comparison-*/
 camera-constrained-comparison/
 method-comparison/
 remote-experiment-backup-*/
+viewer/public/dataset/
+viewer/public/minimap/
+
+# Private report source (contains screenshots with personal browser data)
+*.docx
